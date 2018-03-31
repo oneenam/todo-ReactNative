@@ -4,7 +4,12 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { View } from "react-native";
+import { View, Text } from "react-native";
+import moment from 'moment'
+import Button from '../../components/button';
+import TextField from '../../components/textfield';
+import Label from '../../components/label';
+import styles from './styles';
 
 class Authcontainer extends Component {
 
@@ -33,10 +38,29 @@ class Authcontainer extends Component {
     componentWillUnmount() {
     }
 
+    handleLogin = () => {
+        console.warn("login");
+    }
+
+    handleRegistration = () => {
+        console.warn("registration");
+    }
+
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: 'red' }}>
-
+            <View style={styles.container}>
+                <View style={[styles.subContainer, { flex: 0.3, alignItems: 'center' }]}>
+                    <Label title="todo" />
+                    <Label title={moment(new Date()).format('dddd DD MMM YYYY')} style={{ fontSize: 14, fontWeight: 'normal', color: 'gray', marginTop: 10 }} />
+                </View>
+                <View style={[styles.subContainer, { flex: 0.6 }]}>
+                    <TextField placeholder="Email" keyboardType="email-address" />
+                    <TextField placeholder="Password" secureTextEntry={true} />
+                    <Button title="LOGIN" onPress={this.handleLogin} style={{ marginTop: 20 }} />
+                </View>
+                <View style={[styles.subContainer, { flex: 0.1 }]}>
+                    <Button title="REGISTRATION" onPress={this.handleRegistration} />
+                </View>
             </View>
         )
     }
