@@ -8,6 +8,7 @@ export default StyleSheet.create({
     textField: {
         paddingVertical: 6,
         paddingHorizontal: 6,
+        backgroundColor: 'white',
         borderColor: '#C0C0C0',
         borderWidth: 1,
         height: 48,

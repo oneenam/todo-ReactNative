@@ -22,6 +22,7 @@ class TodoListContainer extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        return true;
     }
 
     componentWillUpdate(nextProps, nextState) {

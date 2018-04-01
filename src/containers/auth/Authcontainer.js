@@ -6,6 +6,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { View, Text } from "react-native";
 import moment from 'moment'
+import { NavigationActions } from 'react-navigation'
 import Button from '../../components/button';
 import TextField from '../../components/textfield';
 import Label from '../../components/label';
@@ -15,6 +16,12 @@ class Authcontainer extends Component {
 
     constructor(props) {
         super(props)
+
+        this.state = {
+            isLogin: true,
+            email: '',
+            password: ''
+        }
     }
 
     componentWillMount() {
@@ -27,6 +34,7 @@ class Authcontainer extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        return true;
     }
 
     componentWillUpdate(nextProps, nextState) {
@@ -38,12 +46,22 @@ class Authcontainer extends Component {
     componentWillUnmount() {
     }
 
-    handleLogin = () => {
-        console.warn("login");
+    handleAuthentication = () => {
+        //console.log(this.props);
+        if (this.state.isLogin) {
+            this.props.navigation.dispatch(NavigationActions.reset(
+                {
+                    index: 0,
+                    actions: [NavigationActions.navigate({ routeName: 'TodoAdd' })]
+                }
+            ));
+        } else {
+
+        }
     }
 
-    handleRegistration = () => {
-        console.warn("registration");
+    handleAuthMode = () => {
+        this.setState({ isLogin: !this.state.isLogin });
     }
 
     render() {
@@ -54,12 +72,17 @@ class Authcontainer extends Component {
                     <Label title={moment(new Date()).format('dddd DD MMM YYYY')} style={{ fontSize: 14, fontWeight: 'normal', color: 'gray', marginTop: 10 }} />
                 </View>
                 <View style={[styles.subContainer, { flex: 0.6 }]}>
-                    <TextField placeholder="Email" keyboardType="email-address" />
+                    <TextField placeholder="Email" keyboardType="email-address"
+                        value={this.state.email}
+                        onChangeText={(text) =>
+                            this.emailValidate(text)
+                        }
+                    />
                     <TextField placeholder="Password" secureTextEntry={true} />
-                    <Button title="LOGIN" onPress={this.handleLogin} style={{ marginTop: 20 }} />
+                    <Button title={(this.state.isLogin) ? "LOGIN" : "REGISTRATION"} onPress={this.handleAuthentication} style={{ marginTop: 20 }} />
                 </View>
                 <View style={[styles.subContainer, { flex: 0.1 }]}>
-                    <Button title="REGISTRATION" onPress={this.handleRegistration} />
+                    <Button title={(this.state.isLogin) ? "REGISTRATION" : "LOGIN"} onPress={this.handleAuthMode} />
                 </View>
             </View>
         )

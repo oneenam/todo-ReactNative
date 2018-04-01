@@ -7,7 +7,7 @@ import { View, TextInput } from 'react-native'
 import styles from './styles';
 
 const TextField = (props) => (
-    <View style={styles.textField}>
+    <View style={[styles.textField, props.style]}>
         <TextInput
             style={styles.textInput}
             autoCapitalize="none"
