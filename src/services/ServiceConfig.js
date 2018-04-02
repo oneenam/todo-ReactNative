@@ -13,6 +13,7 @@ export default class ServiceConfig {
             'Content-Type': 'application/json',
             'xauth': xAuth
         };
+
         switch (method) {
             case 'POST':
                 return {
@@ -52,6 +53,18 @@ export default class ServiceConfig {
 
         fetch(`${SERVICE_URI}/${endServiceUri}`, this.setConfig('POST', xAuth, body)).then(response => {
             return response;
+        }).then((resp) => {
+            thenFn(resp);
+        }).catch((err) => {
+            catchFn(err);
+        })
+
+    };
+
+    get = (endServiceUri, xAuth, thenFn, catchFn) => {
+
+        fetch(`${SERVICE_URI}/${endServiceUri}`, this.setConfig('GET', xAuth)).then(response => {
+            return response.json();
         }).then((resp) => {
             thenFn(resp);
         }).catch((err) => {

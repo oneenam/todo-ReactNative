@@ -12,6 +12,7 @@ import TextField from '../../components/textfield';
 import Label from '../../components/label';
 import styles from './styles';
 import { serviceLogin, serviceRegistration, resetAuthService } from '../../actions/AuthAction';
+import { serviceTodos } from '../../actions/TodoAction';
 import Indicator from '../../components/indicator';
 import { emailValidate, showToast } from '../../utility'
 import InfoDialog from '../../components/infoDialog';
@@ -23,8 +24,8 @@ class AuthContainer extends Component {
 
         this.state = {
             isLogin: true,
-            email: '',
-            password: ''
+            email: 'oneenam@gmail.com',
+            password: 'asdfasdf'
         }
     }
 

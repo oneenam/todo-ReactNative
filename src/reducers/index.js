@@ -4,5 +4,5 @@
 
 import navigation from './navigatorReducer';
 import auth from './authReducer';
-
-export default { auth, navigation };
+import todo from './todoReducer';
+export default { navigation, auth, todo };

@@ -2,9 +2,9 @@
  * Created by Muhammad Enamul Huq Sarkar on 3/31/18
  */
 
-import { connect } from 'react-redux';
 import * as ActionTypes from './ActionTypes';
 import AuthService from '../services/AuthService';
+import { serviceTodos } from './TodoAction';
 
 export const serviceLogin = (params) => {
     return dispatch => {
@@ -12,7 +12,8 @@ export const serviceLogin = (params) => {
         new AuthService().login(params, resp => {
             if (resp.status === 200) {
                 dispatch(authServiceSuccess(resp.headers.map.xauth[0]))
-                //check is there any todos exist or not
+                //get todos
+                dispatch(serviceTodos(resp.headers.map.xauth[0]));
             } else {
                 dispatch(authServiceError("Login failed!"))
             }
@@ -29,7 +30,8 @@ export const serviceRegistration = (params) => {
         new AuthService().registration(params, resp => {
             if (resp.status === 200) {
                 dispatch(authServiceSuccess(resp.headers.map.xauth[0]))
-                //check is there any todos exist or not
+                //get todos
+                dispatch(serviceTodos(resp.headers.map.xauth[0]));
             } else {
                 dispatch(authServiceError("Registration failed!"))
             }
