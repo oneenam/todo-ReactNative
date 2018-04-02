@@ -6,11 +6,13 @@ import { StackNavigator } from 'react-navigation';
 
 import AuthScreen from '../containers/auth/Authcontainer';
 import TodoAddScreen from '../containers/todo/add/TodoAddContainer';
+import TodoListScreen from '../containers/todo/list/TodoListContainer';
 
 export default AppNavigator = StackNavigator(
     {
         Auth: { screen: AuthScreen },
         TodoAdd: { screen: TodoAddScreen },
+        TodoList: { screen: TodoListScreen }
     },
     {
         mode: 'modal',

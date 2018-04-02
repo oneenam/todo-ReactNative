@@ -7,6 +7,8 @@ import NavigatorContainer from './src/containers/NavigatorContainer';
 export default class App extends Component {
   render() {
     const { persistor, store } = configureStore;
+    //clean persistor
+    //persistor.purge();
     return (
       <Provider store={store}>
         <PersistGate

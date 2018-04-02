@@ -4,7 +4,10 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { View } from "react-native";
+import { View, Platform, TouchableOpacity, Text } from "react-native";
+import { NavigationActions } from 'react-navigation'
+import Label from '../../../components/label';
+import styles from './styles';
 
 class TodoListContainer extends Component {
 
@@ -34,9 +37,31 @@ class TodoListContainer extends Component {
     componentWillUnmount() {
     }
 
+    handleAddItem = () => {
+        this.props.navigation.dispatch(NavigationActions.reset(
+            {
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'TodoAdd', params: { addItem: true } })]
+            }
+        ));
+    }
+
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: 'green' }}>
+            <View style={styles.container}>
+                <View style={styles.headerContainer}>
+                    <Label title="todo" />
+                    <View style={styles.headerButtonStyle}>
+                        <View style={styles.lineStylel} />
+                        <TouchableOpacity onPress={this.handleAddItem} style={{ marginRight: 30 }}>
+                            <View style={styles.addItemButton}>
+                                <Text style={[{ fontSize: 18, color: 'white' }]}>
+                                    +
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
 
             </View>
         )

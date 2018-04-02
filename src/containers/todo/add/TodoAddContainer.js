@@ -6,10 +6,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { View, Dimensions, TouchableOpacity, Text, ScrollView, TextInput } from "react-native";
 import moment from 'moment'
+import { NavigationActions } from 'react-navigation'
 import Label from '../../../components/label';
 import Button from '../../../components/button';
 import TextField from '../../../components/textfield';
 import styles from './styles';
+import ConfirmDialog from './ConfirmDialog';
 
 const { height, width } = Dimensions.get('window');
 
@@ -20,10 +22,16 @@ class TodoAddContainer extends Component {
         this.state = {
             addItem: false,
             todoText: '',
+            addMore: false
         }
     }
 
     componentWillMount() {
+
+        //there is addItem true from Todo List view
+        if (this.props.navigation.state.params) {
+            this.setState({ addItem: this.props.navigation.state.params.addItem });
+        }
     }
 
     componentDidMount() {
@@ -45,8 +53,26 @@ class TodoAddContainer extends Component {
     componentWillUnmount() {
     }
 
+    handleNewTodo = () => {
+        this.setState({ addMore: true });
+    }
+
     showAddItem = () => {
         this.setState({ addItem: !this.state.addItem });
+    }
+
+    yesPress = () => {
+        this.setState({ addMore: false });
+    }
+
+    noPress = () => {
+        this.setState({ addMore: false });
+        this.props.navigation.dispatch(NavigationActions.reset(
+            {
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'TodoList' })]
+            }
+        ));
     }
 
     render() {
@@ -71,7 +97,7 @@ class TodoAddContainer extends Component {
                                     autoCorrect={false}
                                 />
 
-                                <TouchableOpacity onPress={this.showAddItem} style={{ position: 'absolute', right: 10 }}>
+                                <TouchableOpacity onPress={this.handleNewTodo} style={{ position: 'absolute', right: 10 }}>
                                     <View style={styles.plusButton}>
                                         <Text style={[styles.noteLabel, { fontSize: 18 }]}>
                                             +
@@ -88,6 +114,8 @@ class TodoAddContainer extends Component {
                     <Label title="What do you want to do today?" style={styles.noteLabel} />
                     <Label title="Start adding items to your to-do list." style={styles.noteLabel} />
                 </View>
+                <ConfirmDialog isVisible={this.state.addMore} yesPress={this.yesPress.bind()} noPress={this.noPress.bind()} />
+
             </ScrollView>
 
         )
