@@ -4,15 +4,19 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { View, Text } from "react-native";
+import { View, Text, Keyboard } from "react-native";
 import moment from 'moment'
-import { NavigationActions } from 'react-navigation'
+import { connect } from 'react-redux';
 import Button from '../../components/button';
 import TextField from '../../components/textfield';
 import Label from '../../components/label';
 import styles from './styles';
+import { serviceLogin, serviceRegistration, resetAuthService } from '../../actions/AuthAction';
+import Indicator from '../../components/indicator';
+import { emailValidate, showToast } from '../../utility'
+import InfoDialog from '../../components/infoDialog';
 
-class Authcontainer extends Component {
+class AuthContainer extends Component {
 
     constructor(props) {
         super(props)
@@ -47,26 +51,44 @@ class Authcontainer extends Component {
     }
 
     handleAuthentication = () => {
-        //console.log(this.props);
-        if (this.state.isLogin) {
-            this.props.navigation.dispatch(NavigationActions.reset(
-                {
-                    index: 0,
-                    actions: [NavigationActions.navigate({ routeName: 'TodoAdd' })]
-                }
-            ));
-        } else {
 
+        Keyboard.dismiss();
+
+        if (!this.state.email) {
+            showToast("Please put your email");
+        } else if (!emailValidate(this.state.email)) {
+            showToast("Invalid email");
+        } else if (!this.state.password) {
+            showToast("Please put your password");
         }
+        else {
+            if (this.state.isLogin) {
+                this.props.loginAction({ email: this.state.email, password: this.state.password });
+            } else {
+                this.props.registrationAction({ email: this.state.email, password: this.state.password });
+            }
+        }
+
     }
 
     handleAuthMode = () => {
         this.setState({ isLogin: !this.state.isLogin });
     }
 
+    yesPress = () => {
+        this.props.resetAuth();
+    }
     render() {
         return (
             <View style={styles.container}>
+                {
+                    (this.props.isLoading) &&
+                    <Indicator animating={this.props.isLoading} />
+                }
+                {
+                    (this.props.error) && <InfoDialog title="Auth" message={this.props.error} isVisible={true} yesPress={this.yesPress.bind()} />
+                }
+
                 <View style={[styles.subContainer, { flex: 0.3, alignItems: 'center' }]}>
                     <Label title="todo" />
                     <Label title={moment(new Date()).format('dddd DD MMM YYYY')} style={{ fontSize: 14, fontWeight: 'normal', color: 'gray', marginTop: 10 }} />
@@ -75,10 +97,13 @@ class Authcontainer extends Component {
                     <TextField placeholder="Email" keyboardType="email-address"
                         value={this.state.email}
                         onChangeText={(text) =>
-                            this.emailValidate(text)
+                            this.setState({ email: text })
                         }
                     />
-                    <TextField placeholder="Password" secureTextEntry={true} />
+                    <TextField placeholder="Password" value={this.state.password} secureTextEntry={true}
+                        onChangeText={(text) =>
+                            this.setState({ password: text })
+                        } />
                     <Button title={(this.state.isLogin) ? "LOGIN" : "REGISTRATION"} onPress={this.handleAuthentication} style={{ marginTop: 20 }} />
                 </View>
                 <View style={[styles.subContainer, { flex: 0.1 }]}>
@@ -89,5 +114,16 @@ class Authcontainer extends Component {
     }
 }
 
+const mapStateToProps = (state) => ({
+    isLoading: state.auth.isLoading,
+    error: state.auth.error,
+    xauth: state.auth.xauth
+});
 
-export default Authcontainer;
+const mapDispatchToProps = (dispatch) => ({
+    loginAction: (params) => dispatch(serviceLogin(params)),
+    registrationAction: (params) => dispatch(serviceRegistration(params)),
+    resetAuth: () => dispatch(resetAuthService())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthContainer);

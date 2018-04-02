@@ -4,7 +4,7 @@
 
 import { StackNavigator } from 'react-navigation';
 
-import AuthScreen from '../containers/auth/Authcontainer';
+import AuthScreen from '../containers/auth/AuthContainer';
 import TodoAddScreen from '../containers/todo/add/TodoAddContainer';
 import TodoListScreen from '../containers/todo/list/TodoListContainer';
 

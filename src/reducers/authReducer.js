@@ -2,39 +2,36 @@
  * Created by Muhammad Enamul Huq Sarkar on 3/31/18
  */
 
-import {
-    LOGIN,
-    LOGIN_SUCCESS,
-    LOGIN_FAILURE
-} from '../actions/auth';
+import * as Actions from '../actions/ActionTypes';
 
 const defaultState = {
     isLoading: false,
     error: null,
-    xAuth: null
+    xauth: null
 };
 
 export default authReducer = (state = defaultState, action) => {
     switch (action.type) {
-        
-        case LOGIN:
-            return {
-                ...state,
-                action,
+
+        case Actions.AUTH:
+            return Object.assign({}, state, {
                 isLoading: true,
-            };
-        case LOGIN_SUCCESS:
-            return {
-                ...state,
+            });
+        case Actions.AUTH_FAILURE:
+            return Object.assign({}, state, {
                 isLoading: false,
-                xAuth: action.xAuth,
-            };
-        case LOGIN_FAILURE:
-            return {
-                ...state,
-                error: action.error,
-                isLoading: false
-            };
+                error: action.error
+            });
+        case Actions.AUTH_SUCCESS:
+            return Object.assign({}, state, {
+                isLoading: false,
+                xauth: action.xauth
+            });
+        case Actions.AUTH_RESET:
+            return Object.assign({}, state, {
+                isLoading: false,
+                error: null
+            });
 
         default:
             return state;

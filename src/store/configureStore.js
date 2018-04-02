@@ -6,6 +6,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import { persistStore, persistCombineReducers } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import thunk from 'redux-thunk';
 
 import rootReducer from '../reducers';
 
@@ -22,8 +23,9 @@ function configureStore(initialState) {
         //debug: true //to get useful logging
         //stateReconciler: hardSet,
     };
-
-    const enhancers = [applyMiddleware(loggerMiddleware)];
+    const enhancers = [applyMiddleware(loggerMiddleware, thunk)];
+    //production
+    //const enhancers = [applyMiddleware(thunk)];
     const persistedReducer = persistCombineReducers(configPersist, rootReducer);
     const store = createStore(persistedReducer, initialState, compose(...enhancers));
     const persistor = persistStore(store, { enhancers });
