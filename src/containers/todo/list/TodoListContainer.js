@@ -4,7 +4,8 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { View, Platform, TouchableOpacity, Text } from "react-native";
+import { connect } from 'react-redux';
+import { View, Platform, TouchableOpacity, Text, FlatList } from "react-native";
 import { NavigationActions } from 'react-navigation'
 import Label from '../../../components/label';
 import styles from './styles';
@@ -13,9 +14,13 @@ class TodoListContainer extends Component {
 
     constructor(props) {
         super(props)
+        this.state = {
+            dataSource: []
+        };
     }
 
     componentWillMount() {
+        this.populateList(this.props.todos);
     }
 
     componentDidMount() {
@@ -46,6 +51,69 @@ class TodoListContainer extends Component {
         ));
     }
 
+
+    populateList = (data) => {
+        var arr = [];
+        data.map((obj, index) => {
+            if (obj.createdAt) {
+                i = index;
+                arr.push({ createdAt: obj.createdAt });
+            }
+            if (obj.todos) {
+                obj.todos.map((o, index) => {
+                    arr.push(o);
+                });
+            }
+        });
+        this.setState({ dataSource: arr });
+    }
+
+    handleTodoComplete = (index, item) => {
+        console.warn("update", index, item.text);
+        //TODO: call update service and refresh list
+    }
+
+    handleTodoDelete = (index, item) => {
+        console.warn("delete", index, item.text);
+        //TODO: call delete service and refresh list
+    }
+
+    renderListItem = (index, item) => {
+        if (item && item.text) {
+            return (
+                <View style={styles.rowStyle}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {
+                            (item.completed) ?
+                                <TouchableOpacity onPress={this.handleTodoComplete.bind(this, index, item)}>
+                                    <View style={[styles.radioButtonStyle, { backgroundColor: 'black' }]} />
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity onPress={this.handleTodoComplete.bind(this, index, item)}>
+                                    <View style={[styles.radioButtonStyle, { borderColor: '#C0C0C0', borderWidth: 1 }]} />
+                                </TouchableOpacity>
+                        }
+
+                        <Text style={[styles.todoTextStyle, { textDecorationLine: (item.completed) ? "line-through" : "none" }]}>
+                            {item.text}
+                        </Text>
+                        <TouchableOpacity onPress={this.handleTodoDelete.bind(this, index, item)}>
+                            <Text style={styles.xTextStyle}>
+                                X
+                            </Text>
+                        </TouchableOpacity>
+
+                    </View>
+                    <View style={styles.rowBottomLine} />
+                </View>
+            );
+        } else {
+            return (
+                <Text style={styles.rowsSectionStyle}>{(item && item.createdAt) && item.createdAt}</Text>
+            );
+        }
+    };
+
     render() {
         return (
             <View style={styles.container}>
@@ -54,7 +122,7 @@ class TodoListContainer extends Component {
                     <View style={styles.headerButtonStyle}>
                         <View style={styles.lineStylel} />
                         <TouchableOpacity onPress={this.handleAddItem} style={{ marginRight: 30 }}>
-                            <View style={styles.addItemButton}>
+                            <View elevation={5} style={styles.addItemButton}>
                                 <Text style={[{ fontSize: 18, color: 'white' }]}>
                                     +
                                 </Text>
@@ -63,10 +131,33 @@ class TodoListContainer extends Component {
                     </View>
                 </View>
 
+                {
+                    (this.state.dataSource) &&
+                    <FlatList
+                        data={this.state.dataSource}
+                        renderItem={
+                            ({ index, item }) => this.renderListItem(index, item)
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                        extraData={this.state}
+                    />
+
+                }
             </View>
         )
     }
 }
 
+const mapStateToProps = (state) => ({
+    isLoading: state.todo.isLoading,
+    error: state.todo.error,
+    todos: state.todo.todos
+});
 
-export default TodoListContainer;
+const mapDispatchToProps = (dispatch) => ({
+    /*loginAction: (params) => dispatch(serviceLogin(params)),
+    registrationAction: (params) => dispatch(serviceRegistration(params)),
+    resetAuth: () => dispatch(resetAuthService())*/
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TodoListContainer);

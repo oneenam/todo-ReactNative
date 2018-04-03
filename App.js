@@ -8,7 +8,7 @@ export default class App extends Component {
   render() {
     const { persistor, store } = configureStore;
     //clean persistor
-    persistor.purge();
+    //persistor.purge();
     return (
       <Provider store={store}>
         <PersistGate
