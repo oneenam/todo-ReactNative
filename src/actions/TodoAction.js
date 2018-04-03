@@ -89,6 +89,7 @@ export const todoUpdateServiceSuccess = (data) => ({
     todo: data
 });
 
+
 //delete
 
 export const serviceDeleteTodo = (id, xAuth) => {
@@ -124,4 +125,47 @@ export const todoDeleteServiceError = (error) => ({
 export const todoDeleteServiceSuccess = (data) => ({
     type: ActionTypes.TODO_DELETE_SUCCESS,
     todo: data
+});
+
+//create
+
+export const serviceCreateTodo = (xAuth, body) => {
+    
+    return dispatch => {
+        dispatch(todoCreateServiceAction());
+        new TodoService().createTodo(xAuth, body, resp => {
+            
+            if (resp.status === 200) {
+                //dispatch(serviceTodos(xAuth));
+                resp.json().then((data)=>{
+                    dispatch(todoCreateServiceSuccess(data));
+                });
+                
+            } else {
+                dispatch(todoCreateServiceError("Todo create failed!"));
+            }
+
+        }, err => {
+            dispatch(todoCreateServiceError("Something wrong!"))
+        });
+
+    }
+};
+
+export const todoCreateServiceAction = () => ({
+    type: ActionTypes.TODO_CREATE
+});
+
+export const todoCreateServiceError = (error) => ({
+    type: ActionTypes.TODO_CREATE_FAILURE,
+    error: error
+});
+
+export const todoCreateServiceSuccess = (data) => ({
+    type: ActionTypes.TODO_CREATE_SUCCESS,
+    newTodo: data
+});
+
+export const todoCreateReset = () => ({
+    type: ActionTypes.TODO_CREATE_RESET
 });

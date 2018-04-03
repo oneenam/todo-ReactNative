@@ -70,12 +70,12 @@ class TodoListContainer extends Component {
     }
 
     handleTodoComplete = (index, item) => {
-        //TODO: confirmation
+        //TODO: show alert for confirmation to delete
         this.props.todoUpdateAction(item._id, this.props.xauth, { text: item.text, completed: !item.completed });
     }
 
     handleTodoDelete = (index, item) => {
-        //todo: confirmation        
+        //todo: show alert for confirmation to delete        
         this.props.todoDeleteAction(item._id, this.props.xauth);
     }
 

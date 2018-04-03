@@ -18,5 +18,9 @@ export default class TodoService extends ServiceConfig {
         this.delete(`todos/${id}`, xAuth, thenFn, catchFn);
     };
 
+    createTodo = (xAuth, body, thenFn, catchFn) => {
+        this.post('todos', xAuth, body, thenFn, catchFn);
+    };
+
 
 }

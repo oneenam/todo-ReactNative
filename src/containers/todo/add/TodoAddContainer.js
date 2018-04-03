@@ -6,13 +6,17 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { View, Dimensions, TouchableOpacity, Text, ScrollView, TextInput } from "react-native";
 import moment from 'moment'
+import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation'
 import Label from '../../../components/label';
 import Button from '../../../components/button';
 import TextField from '../../../components/textfield';
 import styles from './styles';
 import ConfirmDialog from './ConfirmDialog';
-
+import Indicator from '../../../components/indicator';
+import InfoDialog from '../../../components/infoDialog';
+import { serviceCreateTodo, todoCreateReset, serviceTodos } from '../../../actions/TodoAction';
+import { showToast } from '../../../utility'
 const { height, width } = Dimensions.get('window');
 
 class TodoAddContainer extends Component {
@@ -27,11 +31,10 @@ class TodoAddContainer extends Component {
     }
 
     componentWillMount() {
-
-        //there is addItem true from Todo List view
         if (this.props.navigation.state.params) {
             this.setState({ addItem: this.props.navigation.state.params.addItem });
         }
+        this.props.createResetAction();
     }
 
     componentDidMount() {
@@ -54,25 +57,40 @@ class TodoAddContainer extends Component {
     }
 
     handleNewTodo = () => {
-        this.setState({ addMore: true });
+        if (!this.state.todoText) {
+            showToast("Please put todo title.");
+        } else {
+            this.props.todoCreateAction(this.props.xauth, { text: this.state.todoText });
+        }
+    }
+
+    wantToAddMore = () => {
+        this.setState({ addMore: !this.state.addItem });
     }
 
     showAddItem = () => {
+
         this.setState({ addItem: !this.state.addItem });
+
     }
 
     yesPress = () => {
-        this.setState({ addMore: false });
+        this.props.createResetAction();
+        this.setState({ addMore: false, todoText: '' });
     }
 
     noPress = () => {
+        this.props.createResetAction();
         this.setState({ addMore: false });
-        this.props.navigation.dispatch(NavigationActions.reset(
-            {
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'TodoList' })]
-            }
-        ));
+        this.props.todosAction(this.props.xauth);
+    }
+
+    resetPress = () => {
+        this.props.createResetAction();
+    }
+
+    gotoList = () => {
+        this.props.todosAction(this.props.xauth);
     }
 
     render() {
@@ -95,6 +113,10 @@ class TodoAddContainer extends Component {
                                     autoFocus={true}
                                     multiline={false}
                                     autoCorrect={false}
+                                    value={this.state.todoText}
+                                    onChangeText={(text) =>
+                                        this.setState({ todoText: text })
+                                    }
                                 />
 
                                 <TouchableOpacity onPress={this.handleNewTodo} style={{ position: 'absolute', right: 10 }}>
@@ -108,13 +130,32 @@ class TodoAddContainer extends Component {
                             :
                             <Button title="+ Add item" onPress={this.showAddItem} style={{ width: 200 }} />
                     }
+                    {
+                        (this.state.addItem) &&
+                        <View style={{ marginTop: 10 }}>
+                            <Button title="My to-do list" onPress={this.gotoList} style={{ width: 200 }} />
+                        </View>
+                    }
+
                 </View>
 
                 <View style={styles.bottomView}>
                     <Label title="What do you want to do today?" style={styles.noteLabel} />
                     <Label title="Start adding items to your to-do list." style={styles.noteLabel} />
                 </View>
-                <ConfirmDialog isVisible={this.state.addMore} yesPress={this.yesPress.bind()} noPress={this.noPress.bind()} />
+
+                {
+                    (this.props.newTodo) &&
+                    <ConfirmDialog isVisible={(this.props.newTodo) ? true : false} yesPress={this.yesPress.bind()} noPress={this.noPress.bind()} />
+                }
+
+                {
+                    (this.props.isLoading) &&
+                    <Indicator animating={this.props.isLoading} />
+                }
+                {
+                    (this.props.error) && <InfoDialog title="todo" message={this.props.error} isVisible={true} yesPress={this.resetPress.bind()} />
+                }
 
             </ScrollView>
 
@@ -122,5 +163,18 @@ class TodoAddContainer extends Component {
     }
 }
 
+const mapStateToProps = (state) => ({
+    isLoading: state.todo.isLoading,
+    error: state.todo.error,
+    newTodo: state.todo.newTodo,
+    xauth: state.auth.xauth
+});
 
-export default TodoAddContainer;
+const mapDispatchToProps = (dispatch) => ({
+    todoCreateAction: (xAuth, body) => dispatch(serviceCreateTodo(xAuth, body)),
+    createResetAction: () => dispatch(todoCreateReset()),
+    todosAction: (xAuth) => dispatch(serviceTodos(xAuth))
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TodoAddContainer);

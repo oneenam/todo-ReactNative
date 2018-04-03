@@ -24,8 +24,8 @@ class AuthContainer extends Component {
 
         this.state = {
             isLogin: true,
-            email: 'oneenam@gmail.com',
-            password: 'asdfasdf'
+            email: '',
+            password: ''
         }
     }
 
