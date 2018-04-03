@@ -32,8 +32,7 @@ export default class ServiceConfig {
             case 'DELETE':
                 return {
                     method: 'DELETE',
-                    headers: headers,
-                    body: JSON.stringify(body)
+                    headers: headers
                 };
                 break;
 
@@ -74,7 +73,7 @@ export default class ServiceConfig {
     };
 
     patch = (endServiceUri, xAuth, body, thenFn, catchFn) => {
-    
+
         fetch(`${SERVICE_URI}/${endServiceUri}`, this.setConfig('PATCH', xAuth, body)).then(response => {
             return response;
         }).then((resp) => {
@@ -85,4 +84,15 @@ export default class ServiceConfig {
 
     };
 
+    delete = (endServiceUri, xAuth, thenFn, catchFn) => {
+
+        fetch(`${SERVICE_URI}/${endServiceUri}`, this.setConfig('DELETE', xAuth)).then(response => {
+            return response;
+        }).then((resp) => {
+            thenFn(resp);
+        }).catch((err) => {
+            catchFn(err);
+        })
+
+    };
 }

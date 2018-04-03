@@ -62,7 +62,7 @@ export const serviceUpdateTodo = (id, xAuth, body) => {
             if (resp.status === 200) {
                 dispatch(serviceTodos(xAuth));
             } else {
-                dispatch(todoUpdateServiceSuccess("Todo updated failed!"));
+                dispatch(todoUpdateServiceError("Todo updated failed!"));
             }
             /*resp.json().then(function (data) {
                 console.log('update json', data);
@@ -83,7 +83,45 @@ export const todoUpdateServiceError = (error) => ({
     error: error
 });
 
+//todo: not needed
 export const todoUpdateServiceSuccess = (data) => ({
     type: ActionTypes.TODO_UPDATE_SUCCESS,
+    todo: data
+});
+
+//delete
+
+export const serviceDeleteTodo = (id, xAuth) => {
+
+    return dispatch => {
+        dispatch(todoDeleteServiceAction());
+        new TodoService().deleteTodo(id, xAuth, resp => {
+
+            if (resp.status === 200) {
+                dispatch(serviceTodos(xAuth));
+            } else {
+                dispatch(todoDeleteServiceError("Todo cancel failed!"));
+            }
+            /*resp.json().then(function (data) {
+                console.log('update json', data);
+            });*/
+        }, err => {
+            dispatch(todoDeleteServiceError("Something wrong!"))
+        });
+
+    }
+};
+
+export const todoDeleteServiceAction = () => ({
+    type: ActionTypes.TODO_DELETE
+});
+
+export const todoDeleteServiceError = (error) => ({
+    type: ActionTypes.TODO_DELETE_FAILURE,
+    error: error
+});
+
+export const todoDeleteServiceSuccess = (data) => ({
+    type: ActionTypes.TODO_DELETE_SUCCESS,
     todo: data
 });

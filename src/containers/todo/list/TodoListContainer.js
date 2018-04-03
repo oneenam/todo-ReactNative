@@ -9,7 +9,7 @@ import { View, Platform, TouchableOpacity, Text, FlatList } from "react-native";
 import { NavigationActions } from 'react-navigation'
 import Label from '../../../components/label';
 import styles from './styles';
-import { serviceUpdateTodo } from '../../../actions/TodoAction';
+import { serviceUpdateTodo, serviceDeleteTodo } from '../../../actions/TodoAction';
 
 class TodoListContainer extends Component {
 
@@ -70,14 +70,13 @@ class TodoListContainer extends Component {
     }
 
     handleTodoComplete = (index, item) => {
-        //console.warn("update", index, item.text);
-        //TODO: call update service and refresh list
+        //TODO: confirmation
         this.props.todoUpdateAction(item._id, this.props.xauth, { text: item.text, completed: !item.completed });
     }
 
     handleTodoDelete = (index, item) => {
-        console.warn("delete", index, item.text);
-        //TODO: call delete service and refresh list
+        //todo: confirmation        
+        this.props.todoDeleteAction(item._id, this.props.xauth);
     }
 
     renderListItem = (index, item) => {
@@ -159,8 +158,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     todoUpdateAction: (id, xAuth, body) => dispatch(serviceUpdateTodo(id, xAuth, body)),
-    /*registrationAction: (params) => dispatch(serviceRegistration(params)),
-    resetAuth: () => dispatch(resetAuthService())*/
+    todoDeleteAction: (id, xAuth) => dispatch(serviceDeleteTodo(id, xAuth)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TodoListContainer);

@@ -43,6 +43,21 @@ export default todoReducer = (state = defaultState, action) => {
                 todo: action.todo
             });
 
+        case Actions.TODO_DELETE:
+            return Object.assign({}, state, {
+                isLoading: true,
+            });
+        case Actions.TODO_DELETE_FAILURE:
+            return Object.assign({}, state, {
+                isLoading: false,
+                error: action.error
+            });
+        case Actions.TODO_DELETE_SUCCESS:
+            return Object.assign({}, state, {
+                isLoading: false,
+                todo: action.todo
+            });
+
         default:
             return state;
 
