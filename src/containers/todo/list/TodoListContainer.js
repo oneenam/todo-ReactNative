@@ -9,6 +9,7 @@ import { View, Platform, TouchableOpacity, Text, FlatList } from "react-native";
 import { NavigationActions } from 'react-navigation'
 import Label from '../../../components/label';
 import styles from './styles';
+import { serviceUpdateTodo } from '../../../actions/TodoAction';
 
 class TodoListContainer extends Component {
 
@@ -69,8 +70,9 @@ class TodoListContainer extends Component {
     }
 
     handleTodoComplete = (index, item) => {
-        console.warn("update", index, item.text);
+        //console.warn("update", index, item.text);
         //TODO: call update service and refresh list
+        this.props.todoUpdateAction(item._id, this.props.xauth, { text: item.text, completed: !item.completed });
     }
 
     handleTodoDelete = (index, item) => {
@@ -151,12 +153,13 @@ class TodoListContainer extends Component {
 const mapStateToProps = (state) => ({
     isLoading: state.todo.isLoading,
     error: state.todo.error,
-    todos: state.todo.todos
+    todos: state.todo.todos,
+    xauth: state.auth.xauth
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    /*loginAction: (params) => dispatch(serviceLogin(params)),
-    registrationAction: (params) => dispatch(serviceRegistration(params)),
+    todoUpdateAction: (id, xAuth, body) => dispatch(serviceUpdateTodo(id, xAuth, body)),
+    /*registrationAction: (params) => dispatch(serviceRegistration(params)),
     resetAuth: () => dispatch(resetAuthService())*/
 });
 

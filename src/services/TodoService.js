@@ -10,5 +10,9 @@ export default class TodoService extends ServiceConfig {
         this.get('todos', xAuth, thenFn, catchFn);
     };
 
+    updateTodo = (id, xAuth, body, thenFn, catchFn) => {
+        this.patch(`todos/${id}`, xAuth, body, thenFn, catchFn);
+    };
+
 
 }

@@ -27,6 +27,22 @@ export default todoReducer = (state = defaultState, action) => {
                 isLoading: false,
                 todos: action.list
             });
+
+        case Actions.TODO_UPDATE:
+            return Object.assign({}, state, {
+                isLoading: true,
+            });
+        case Actions.TODO_UPDATE_FAILURE:
+            return Object.assign({}, state, {
+                isLoading: false,
+                error: action.error
+            });
+        case Actions.TODO_UPDATE_SUCCESS:
+            return Object.assign({}, state, {
+                isLoading: false,
+                todo: action.todo
+            });
+
         default:
             return state;
 

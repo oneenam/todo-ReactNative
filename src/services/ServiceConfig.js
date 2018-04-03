@@ -26,14 +26,14 @@ export default class ServiceConfig {
                 return {
                     method: 'PATCH',
                     headers: headers,
-                    body: body
+                    body: JSON.stringify(body)
                 };
                 break;
             case 'DELETE':
                 return {
-                    method: 'PATCH',
+                    method: 'DELETE',
                     headers: headers,
-                    body: body
+                    body: JSON.stringify(body)
                 };
                 break;
 
@@ -65,6 +65,18 @@ export default class ServiceConfig {
 
         fetch(`${SERVICE_URI}/${endServiceUri}`, this.setConfig('GET', xAuth)).then(response => {
             return response.json();
+        }).then((resp) => {
+            thenFn(resp);
+        }).catch((err) => {
+            catchFn(err);
+        })
+
+    };
+
+    patch = (endServiceUri, xAuth, body, thenFn, catchFn) => {
+    
+        fetch(`${SERVICE_URI}/${endServiceUri}`, this.setConfig('PATCH', xAuth, body)).then(response => {
+            return response;
         }).then((resp) => {
             thenFn(resp);
         }).catch((err) => {

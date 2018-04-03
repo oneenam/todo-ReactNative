@@ -50,3 +50,40 @@ export const todosServiceSuccess = (data) => ({
     type: ActionTypes.TODOS_SUCCESS,
     list: data
 });
+
+
+//update
+export const serviceUpdateTodo = (id, xAuth, body) => {
+
+    return dispatch => {
+        dispatch(todoUpdateServiceAction());
+        new TodoService().updateTodo(id, xAuth, body, resp => {
+
+            if (resp.status === 200) {
+                dispatch(serviceTodos(xAuth));
+            } else {
+                dispatch(todoUpdateServiceSuccess("Todo updated failed!"));
+            }
+            /*resp.json().then(function (data) {
+                console.log('update json', data);
+            });*/
+        }, err => {
+            dispatch(todoUpdateServiceError("Something wrong!"))
+        });
+
+    }
+};
+
+export const todoUpdateServiceAction = () => ({
+    type: ActionTypes.TODO_UPDATE
+});
+
+export const todoUpdateServiceError = (error) => ({
+    type: ActionTypes.TODO_UPDATE_FAILURE,
+    error: error
+});
+
+export const todoUpdateServiceSuccess = (data) => ({
+    type: ActionTypes.TODO_UPDATE_SUCCESS,
+    todo: data
+});
