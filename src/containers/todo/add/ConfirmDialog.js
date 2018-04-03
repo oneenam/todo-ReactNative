@@ -6,28 +6,28 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import Modal from "react-native-modal";
 import { View, Text, TouchableOpacity } from 'react-native'
+import styles from './styles';
 
-//TODO: move styles to styles.js
 
 const ConfirmDialog = (props) => {
     return (
         <Modal isVisible={props.isVisible}>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <View style={{ backgroundColor: 'white', height: 200, alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'verdana', fontSize: 20, fontWeight: 'bold', color: 'black', alignSelf: 'flex-start', margin: 20 }}>Add item</Text>
-                    <View style={{ height: 72, alignSelf: 'flex-start', justifyContent: 'center', marginLeft: 20, marginRight: 20 }}>
-                        <Text style={{ fontFamily: 'verdana', fontSize: 16, color: 'black' }}>Do you want to add more?</Text>
+            <View style={styles.dialogContainer}>
+                <View style={styles.dialogSubContainer}>
+                    <Text style={styles.dialogTitle}>Add item</Text>
+                    <View style={styles.dialogMessageContainer}>
+                        <Text style={styles.dialogMessageText}>Do you want to add more?</Text>
                     </View>
-                    <View style={{ alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+                    <View style={styles.dialogButtonContainer}>
                         <TouchableOpacity style={{ margin: 4 }} onPress={() => props.noPress()}>
-                            <View style={{ width: 72, alignItems: 'center' }}>
-                                <Text style={{ fontFamily: 'verdana', fontSize: 16, fontWeight: 'bold', color: 'black' }}>NO</Text>
+                            <View style={styles.dialogButtonStyle}>
+                                <Text style={styles.dialogButtonText}>NO</Text>
                             </View>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={{ margin: 4 }} onPress={() => props.yesPress()}>
-                            <View style={{ width: 72, alignItems: 'center' }}>
-                                <Text style={{ fontFamily: 'verdana', fontSize: 16, fontWeight: 'bold', color: 'black' }}>YES</Text>
+                            <View style={styles.dialogButtonStyle}>
+                                <Text style={styles.dialogButtonText}>YES</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

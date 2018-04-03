@@ -65,5 +65,47 @@ export default StyleSheet.create({
         height: 48, 
         justifyContent: 'center', 
         alignItems: 'center'
+    },
+    dialogContainer:{
+        flex: 1, 
+        justifyContent: 'center'
+    },
+    dialogSubContainer: {
+        backgroundColor: 'white',
+        height: 200, 
+        alignItems: 'center'
+    },
+    dialogTitle:{
+        fontFamily: 'verdana', 
+        fontSize: 20, 
+        fontWeight: 'bold', 
+        color: 'black', 
+        alignSelf: 'flex-start', 
+        margin: 20
+    },
+    dialogMessageContainer:{
+        height: 72, 
+        alignSelf: 'flex-start', 
+        justifyContent: 'center', 
+        marginLeft: 20, 
+        marginRight: 20
+    },
+    dialogMessageText:{
+        fontFamily: 'verdana', 
+        fontSize: 16, 
+        color: 'black'
+    },
+    dialogButtonContainer:{
+        alignSelf: 'flex-end', 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        marginTop: 20
+    },
+    dialogButtonStyle:{
+        width: 72, alignItems: 'center'
+    },
+    dialogButtonText:{
+        fontFamily: 'verdana', fontSize: 16, fontWeight: 'bold', color: 'black'
     }
+    
 });

@@ -3,37 +3,41 @@
  */
 
 import * as ActionTypes from './ActionTypes';
-import TodoService from '../services/TodoService';
 import { NavigationActions } from 'react-navigation'
+import * as Constants from '../constants';
+import { fetchConfig } from '../utility';
 
 export const serviceTodos = (xAuth) => {
     return dispatch => {
         dispatch(todosServiceAction());
-        new TodoService().todos(xAuth, resp => {
 
-            if (resp.todos && resp.todos.length) {
-                dispatch(todosServiceSuccess(resp.todos))
-                dispatch(NavigationActions.reset(
-                    {
-                        index: 0,
-                        actions: [NavigationActions.navigate({ routeName: 'TodoList' })]
-                    }
-                ));
-            }
-            else {
-                //go to add new
-                dispatch(NavigationActions.reset(
-                    {
-                        index: 0,
-                        actions: [NavigationActions.navigate({ routeName: 'TodoAdd' })]
-                    }
-                ));
-
-            }
-        }, err => {
-            //
-            dispatch(todosServiceError("Something wrong!"))
-        });
+        fetch(`${Constants.SERVICE_URI}/todos`, fetchConfig('GET', xAuth))
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                dispatch(todosServiceSuccess(response.todos));
+                if (response.todos.length) {
+                    dispatch(NavigationActions.reset(
+                        {
+                            index: 0,
+                            actions: [NavigationActions.navigate({ routeName: 'TodoList' })]
+                        }
+                    ));
+                } else {
+                    dispatch(NavigationActions.reset(
+                        {
+                            index: 0,
+                            actions: [NavigationActions.navigate({ routeName: 'TodoAdd' })]
+                        }
+                    ));
+                }
+            })
+            .catch(() => dispatch(todosServiceError("Something wrong!")));
     }
 };
 
@@ -57,19 +61,20 @@ export const serviceUpdateTodo = (id, xAuth, body) => {
 
     return dispatch => {
         dispatch(todoUpdateServiceAction());
-        new TodoService().updateTodo(id, xAuth, body, resp => {
 
-            if (resp.status === 200) {
+        fetch(`${Constants.SERVICE_URI}/todos/${id}`, fetchConfig('PATCH', xAuth, body))
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                dispatch(todoUpdateServiceSuccess(response.todo));
                 dispatch(serviceTodos(xAuth));
-            } else {
-                dispatch(todoUpdateServiceError("Todo updated failed!"));
-            }
-            /*resp.json().then(function (data) {
-                console.log('update json', data);
-            });*/
-        }, err => {
-            dispatch(todoUpdateServiceError("Something wrong!"))
-        });
+            })
+            .catch(() => dispatch(todoUpdateServiceError("Todo updated failed.")));
 
     }
 };
@@ -96,19 +101,20 @@ export const serviceDeleteTodo = (id, xAuth) => {
 
     return dispatch => {
         dispatch(todoDeleteServiceAction());
-        new TodoService().deleteTodo(id, xAuth, resp => {
 
-            if (resp.status === 200) {
+        fetch(`${Constants.SERVICE_URI}/todos/${id}`, fetchConfig('DELETE', xAuth))
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                dispatch(todoDeleteServiceSuccess(response.todo));
                 dispatch(serviceTodos(xAuth));
-            } else {
-                dispatch(todoDeleteServiceError("Todo cancel failed!"));
-            }
-            /*resp.json().then(function (data) {
-                console.log('update json', data);
-            });*/
-        }, err => {
-            dispatch(todoDeleteServiceError("Something wrong!"))
-        });
+            })
+            .catch(() => dispatch(todoDeleteServiceError("Todo cancel failed.")));
 
     }
 };
@@ -128,26 +134,24 @@ export const todoDeleteServiceSuccess = (data) => ({
 });
 
 //create
-
 export const serviceCreateTodo = (xAuth, body) => {
-    
+
     return dispatch => {
         dispatch(todoCreateServiceAction());
-        new TodoService().createTodo(xAuth, body, resp => {
-            
-            if (resp.status === 200) {
-                //dispatch(serviceTodos(xAuth));
-                resp.json().then((data)=>{
-                    dispatch(todoCreateServiceSuccess(data));
-                });
-                
-            } else {
-                dispatch(todoCreateServiceError("Todo create failed!"));
-            }
 
-        }, err => {
-            dispatch(todoCreateServiceError("Something wrong!"))
-        });
+        fetch(`${Constants.SERVICE_URI}/todos`, fetchConfig('POST', xAuth, body))
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                dispatch(todoCreateServiceSuccess(response));
+                //dispatch(serviceTodos(xAuth));
+            })
+            .catch(() => dispatch(todoCreateServiceError("Todo create failed.")));
 
     }
 };

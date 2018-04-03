@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { View, Dimensions, TouchableOpacity, Text, ScrollView, TextInput } from "react-native";
+import { View, Dimensions, TouchableOpacity, Text, ScrollView, TextInput, Keyboard } from "react-native";
 import moment from 'moment'
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation'
@@ -30,36 +30,19 @@ class TodoAddContainer extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.navigation.state.params) {
             this.setState({ addItem: this.props.navigation.state.params.addItem });
         }
-        this.props.createResetAction();
+        //this.props.createResetAction();
     }
-
-    componentDidMount() {
-    }
-
-    componentWillReceiveProps(nextProps) {
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return true;
-    }
-
-    componentWillUpdate(nextProps, nextState) {
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-    }
-
-    componentWillUnmount() {
-    }
+    
 
     handleNewTodo = () => {
         if (!this.state.todoText) {
             showToast("Please put todo title.");
         } else {
+            Keyboard.dismiss();
             this.props.todoCreateAction(this.props.xauth, { text: this.state.todoText });
         }
     }
@@ -76,7 +59,7 @@ class TodoAddContainer extends Component {
 
     yesPress = () => {
         this.props.createResetAction();
-        this.setState({ addMore: false, todoText: '' });
+        this.setState({ addMore: true, todoText: '' });
     }
 
     noPress = () => {
@@ -90,6 +73,7 @@ class TodoAddContainer extends Component {
     }
 
     gotoList = () => {
+        Keyboard.dismiss();
         this.props.todosAction(this.props.xauth);
     }
 
@@ -131,7 +115,7 @@ class TodoAddContainer extends Component {
                             <Button title="+ Add item" onPress={this.showAddItem} style={{ width: 200 }} />
                     }
                     {
-                        (this.state.addItem) &&
+                        (this.props.navigation.state.params && this.props.navigation.state.params.addItem) &&
                         <View style={{ marginTop: 10 }}>
                             <Button title="My to-do list" onPress={this.gotoList} style={{ width: 200 }} />
                         </View>
@@ -174,7 +158,6 @@ const mapDispatchToProps = (dispatch) => ({
     todoCreateAction: (xAuth, body) => dispatch(serviceCreateTodo(xAuth, body)),
     createResetAction: () => dispatch(todoCreateReset()),
     todosAction: (xAuth) => dispatch(serviceTodos(xAuth))
-
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TodoAddContainer);

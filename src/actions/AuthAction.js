@@ -3,42 +3,50 @@
  */
 
 import * as ActionTypes from './ActionTypes';
-import AuthService from '../services/AuthService';
 import { serviceTodos } from './TodoAction';
+import * as Constants from '../constants';
+import { fetchConfig } from '../utility';
 
-export const serviceLogin = (params) => {
+
+export const serviceLogin = (body) => {
     return dispatch => {
         dispatch(authServiceAction());
-        new AuthService().login(params, resp => {
-            if (resp.status === 200) {
-                dispatch(authServiceSuccess(resp.headers.map.xauth[0]))
-                //get todos
-                dispatch(serviceTodos(resp.headers.map.xauth[0]));
-            } else {
-                dispatch(authServiceError("Login failed!"))
-            }
-        }, err => {
-            //
-            dispatch(authServiceError("Login failed!"))
-        });
+
+        fetch(`${Constants.SERVICE_URI}/users/login`, fetchConfig('POST', '', body))
+            .then(response => {
+                console.log(response);
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+            .then((response) => {
+
+                dispatch(authServiceSuccess(response.headers.map.xauth[0]))
+                dispatch(serviceTodos(response.headers.map.xauth[0]));
+            })
+            .catch(() => dispatch(authServiceError("Login failed.")));
+
     }
 };
 
-export const serviceRegistration = (params) => {
+export const serviceRegistration = (body) => {
     return dispatch => {
         dispatch(authServiceAction());
-        new AuthService().registration(params, resp => {
-            if (resp.status === 200) {
-                dispatch(authServiceSuccess(resp.headers.map.xauth[0]))
-                //get todos
-                dispatch(serviceTodos(resp.headers.map.xauth[0]));
-            } else {
-                dispatch(authServiceError("Registration failed!"))
-            }
-        }, err => {
-            //
-            dispatch(authServiceError("Registration failed!"))
-        });
+
+        fetch(`${Constants.SERVICE_URI}/users/registration`, fetchConfig('POST', '', body))
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+            .then((response) => {
+                dispatch(authServiceSuccess(response.headers.map.xauth[0]))
+                dispatch(serviceTodos(response.headers.map.xauth[0]));
+            })
+            .catch(() => dispatch(authServiceError("Registration failed.")));
+
     }
 };
 
